@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Thêm Đặt Chỗ</title>
+</head>
+<body>
+    <header>
+        <h1>Thêm Lịch Đặt Chỗ</h1>
+    </header>
+    <main>
+        <div class="container">
+            <form id="new-booking-form" class="form">
+                <label>Tên Khách Hàng</label>
+                <input type="text" name="customerName" placeholder="Nhập tên khách hàng" required>
+
+                <label>Ngày</label>
+                <input type="date" name="date" required>
+
+                <label>Giờ</label>
+                <input type="time" name="time" required>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Thêm</button>
+                    <a href="index.html" class="btn secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.getElementById('new-booking-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            const response = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                alert('Đặt chỗ mới thành công!');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

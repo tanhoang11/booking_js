@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Sửa Đặt Chỗ</title>
+</head>
+<body>
+    <header>
+        <h1>Sửa Lịch Đặt Chỗ</h1>
+    </header>
+    <main>
+        <div class="container">
+            <form id="edit-booking-form" class="form">
+                <label>Tên Khách Hàng</label>
+                <input type="text" name="customerName" id="customerName" required>
+
+                <label>Ngày</label>
+                <input type="date" name="date" id="date" required>
+
+                <label>Giờ</label>
+                <input type="time" name="time" id="time" required>
+
+                <label>Trạng Thái</label>
+                <select name="status" id="status" required>
+                    <option value="Pending">Chờ Xử Lý</option>
+                    <option value="Confirmed">Đã Xác Nhận</option>
+                    <option value="Cancelled">Đã Hủy</option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Lưu Thay Đổi</button>
+                    <a href="index.html" class="btn secondary">Quay Lại</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script>
+        // Lấy ID đặt chỗ từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get('id');
+
+        // Lấy thông tin đặt chỗ từ API
+        async function fetchBooking() {
+            const response = await fetch(`/api/bookings/${bookingId}`);
+            const booking = await response.json();
+            if (response.ok) {
+                // Điền thông tin vào form
+                document.getElementById('customerName').value = booking.customerName;
+                document.getElementById('date').value = booking.date;
+                document.getElementById('time').value = booking.time;
+                document.getElementById('status').value = booking.status;
+            } else {
+                alert('Không tìm thấy thông tin đặt chỗ!');
+            }
+        }
+
+        // Gửi dữ liệu sửa thông tin đặt chỗ
+        document.getElementById('edit-booking-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const customerName = document.getElementById('customerName').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const status = document.getElementById('status').value;
+
+            const data = { customerName, date, time, status };
+
+            const response = await fetch(`/api/bookings/${bookingId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Cập nhật thành công!');
+                window.location.href = 'index.html'; // Quay lại trang danh sách
+            } else {
+                alert('Có lỗi xảy ra, vui lòng thử lại!');
+            }
+        });
+
+        // Gọi hàm để tải thông tin khi trang được tải
+        fetchBooking();
+    </script>
+</body>
+</html>
+
